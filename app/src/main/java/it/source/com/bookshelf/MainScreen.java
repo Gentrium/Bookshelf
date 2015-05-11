@@ -1,10 +1,10 @@
 package it.source.com.bookshelf;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +14,7 @@ import android.widget.CursorAdapter;
 import it.source.com.bookshelf.Database.BooksDatabase;
 
 
-public class MainScreen extends Activity {
+public class MainScreen extends ActionBarActivity {
 
     BooksDatabase database;
 
@@ -22,6 +22,8 @@ public class MainScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+        database = new BooksDatabase(this);
+        database.open();
     }
 
     @Override
@@ -39,11 +41,15 @@ public class MainScreen extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
         switch (id) {
+            case R.id.add_book:
+                database.fillSomeData();
+                break;
             case R.id.clear_all:
+                database.deleteAllData();
                 break;
             case R.id.add_genre:
                 break;
@@ -54,7 +60,7 @@ public class MainScreen extends Activity {
     }
 
     public void btnAddClick(View view) {
-        database.fillSomeData();
+
     }
 
     class MyCursorLoader extends CursorLoader{

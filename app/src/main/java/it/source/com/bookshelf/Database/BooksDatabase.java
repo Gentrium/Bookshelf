@@ -1,5 +1,6 @@
 package it.source.com.bookshelf.Database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,26 +16,90 @@ public class BooksDatabase {
     private Context context;
     private static final String LOG_TAG = "logs";
 
+    public BooksDatabase(Context context) {
+        this.context = context;
+    }
+
     public void fillSomeData(){
-        database.execSQL("INSERT " + Constants.BOOK_TABLE_NAME + " VALUES( N'Android in practice', 500, 1, 1);");
-        database.execSQL("INSERT " + Constants.BOOK_TABLE_NAME + " VALUES( N'Thinking in java', 500, 1, 2);");
-        database.execSQL("INSERT " + Constants.BOOK_TABLE_NAME + " VALUES( N'Java full guide', 400, 1, 3);");
-        database.execSQL("INSERT " + Constants.BOOK_TABLE_NAME + " VALUES( N'Java 2 se', 300, 1, 4);");
-        database.execSQL("INSERT " + Constants.BOOK_TABLE_NAME + " VALUES( N'Companions', 800, 2, 5);");
-        database.execSQL("INSERT " + Constants.BOOK_TABLE_NAME + " VALUES( N'Game of thrones', 1100, 2, 6);");
-        database.execSQL("INSERT " + Constants.GENRES_TABLE + " VALUES(N'Programming');");
-        database.execSQL("INSERT " + Constants.GENRES_TABLE + " VALUES(N'Fantasy');");
-        database.execSQL("INSERT " + Constants.AUTHORS_TABLE + " VALUES(N'Key', N'Horstmann');");
-        database.execSQL("INSERT " + Constants.AUTHORS_TABLE + " VALUES(N'Harry', N'Cornell');");
-        database.execSQL("INSERT " + Constants.AUTHORS_TABLE + " VALUES(N'Herbert', N'Shildt');");
-        database.execSQL("INSERT " + Constants.AUTHORS_TABLE + " VALUES(N'Bruce', N'Ekkel');");
-        database.execSQL("INSERT " + Constants.AUTHORS_TABLE + " VALUES(N'Robert', N'Salvatore');");
-        database.execSQL("INSERT " + Constants.AUTHORS_TABLE + " VALUES(N'George', N'Martin');");
-        database.execSQL("INSERT " + Constants.AUTHORS_TABLE + " VALUES(N'George', N'Martin');");
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.BOOK_NAME, "Android in practice");
+        cv.put(Constants.BOOK_SIZE, 500);
+        cv.put(Constants.BOOK_GENRE, 1);
+        cv.put(Constants.BOOK_ISBN, 1);
+        database.insert(Constants.BOOK_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.BOOK_NAME, "Thinking in Java");
+        cv.put(Constants.BOOK_SIZE, 400);
+        cv.put(Constants.BOOK_GENRE, 1);
+        cv.put(Constants.BOOK_ISBN, 2);
+        database.insert(Constants.BOOK_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.BOOK_NAME, "Java full guide");
+        cv.put(Constants.BOOK_SIZE, 300);
+        cv.put(Constants.BOOK_GENRE, 1);
+        cv.put(Constants.BOOK_ISBN, 3);
+        database.insert(Constants.BOOK_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.BOOK_NAME, "Java 2 se");
+        cv.put(Constants.BOOK_SIZE, 300);
+        cv.put(Constants.BOOK_GENRE, 1);
+        cv.put(Constants.BOOK_ISBN, 4);
+        database.insert(Constants.BOOK_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.BOOK_NAME, "Companions");
+        cv.put(Constants.BOOK_SIZE, 800);
+        cv.put(Constants.BOOK_GENRE, 2);
+        cv.put(Constants.BOOK_ISBN, 5);
+        database.insert(Constants.BOOK_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.BOOK_NAME, "Game of thrones");
+        cv.put(Constants.BOOK_SIZE, 1800);
+        cv.put(Constants.BOOK_GENRE, 2);
+        cv.put(Constants.BOOK_ISBN, 6);
+        database.insert(Constants.BOOK_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.GENRE_NAME, "Programming");
+        database.insert(Constants.GENRES_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.GENRE_NAME, "Fantasy");
+        database.insert(Constants.GENRES_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.AUTHOR_NAME, "Key");
+        cv.put(Constants.AUTHOR_LAST_NAME, "Horstmann");
+        database.insert(Constants.AUTHORS_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.AUTHOR_NAME, "Harry");
+        cv.put(Constants.AUTHOR_LAST_NAME, "Cornell");
+        database.insert(Constants.AUTHORS_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.AUTHOR_NAME, "Herbert");
+        cv.put(Constants.AUTHOR_LAST_NAME, "Shildt");
+        database.insert(Constants.AUTHORS_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.AUTHOR_NAME, "Bruce");
+        cv.put(Constants.AUTHOR_LAST_NAME, "Ekkel");
+        database.insert(Constants.AUTHORS_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.AUTHOR_NAME, "Robert");
+        cv.put(Constants.AUTHOR_LAST_NAME, "Salvatore");
+        database.insert(Constants.AUTHORS_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.AUTHOR_NAME, "George");
+        cv.put(Constants.AUTHOR_LAST_NAME, "Martin");
+        database.insert(Constants.AUTHORS_TABLE, null, cv);
+        cv.clear();
+
         // выводим в лог данные по должностям
         Cursor c;
         Log.d(LOG_TAG, "--- Table position ---");
-        c = database.query(Constants.BOOK_TABLE_NAME, null, null, null, null, null, null);
+        c = database.query(Constants.BOOK_TABLE, null, null, null, null, null, null);
+        logCursor(c);
+        c.close();
+        Log.d(LOG_TAG, "--- ---");
+        Log.d(LOG_TAG, "--- Table  ---");
+        c = database.rawQuery("SELECT GROUP_CONCAT ( " + Constants.BOOK_NAME + "  ) AS order_summary" +
+                        " FROM " + Constants.BOOK_TABLE +
+                        " WHERE " + Constants.BOOK_GENRE + " = 1", null);
         logCursor(c);
         c.close();
         Log.d(LOG_TAG, "--- ---");
@@ -56,8 +121,15 @@ public class BooksDatabase {
             Log.d(LOG_TAG, "Cursor is null");
     }
 
+    public void deleteAllData(){
+        database.delete(Constants.BOOK_TABLE, null, null);
+        database.delete(Constants.AUTHORS_TABLE, null, null);
+        database.delete(Constants.GENRES_TABLE, null, null);
+        database.delete(Constants.AUTHOR_PLUS_BOOK_TABLE, null, null);
+    }
+
     private static final String CREATE_BOOKS_TABLE = "create table "
-            + Constants.BOOK_TABLE_NAME + " ("
+            + Constants.BOOK_TABLE + " ("
             + Constants.BOOK_ID + " integer primary key autoincrement, "
             + Constants.BOOK_NAME + " text not null unique, "
             + Constants.BOOK_SIZE + " integer not null, "
@@ -65,18 +137,18 @@ public class BooksDatabase {
             + Constants.BOOK_ISBN + " integer unique, "
             + Constants.BOOK_COVER + " text);";
 
-    private static final  String CREATE_AUTHOR_TABLE = "create table"
+    private static final  String CREATE_AUTHOR_TABLE = "create table "
             + Constants.AUTHORS_TABLE + " ( "
             + Constants.AUTHOR_ID + " integer primary key autoincrement, "
             + Constants.AUTHOR_NAME + " text not null, "
             + Constants.AUTHOR_LAST_NAME + " text); ";
 
-    private static final String CREATE_GENRES_TABLE = "create table"
+    private static final String CREATE_GENRES_TABLE = "create table "
             + Constants.GENRES_TABLE + " ( "
             + Constants.GENRE_ID + " integer primary key autoincrement, "
             + Constants.GENRE_NAME + " text not null unique ); ";
 
-    private static final String CREATE_AUTHORS_BOOKS_TABLE = "create table"
+    private static final String CREATE_AUTHORS_BOOKS_TABLE = "create table "
             + Constants.AUTHOR_PLUS_BOOK_TABLE + " ( "
             + Constants.BOOK_ID + " integer, "
             + Constants.AUTHOR_ID + " integer);";

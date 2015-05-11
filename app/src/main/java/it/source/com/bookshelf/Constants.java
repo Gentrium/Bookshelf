@@ -1,7 +1,7 @@
 package it.source.com.bookshelf;
 
 public class Constants {
-    public static final String BOOK_TABLE_NAME = "books";
+    public static final String BOOK_TABLE = "books";
     public static final String BOOK_ID = "_id";
     public static final String BOOK_NAME = "bookName";
     public static final String BOOK_SIZE = "bookSize";
