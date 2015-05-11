@@ -10,6 +10,16 @@ import android.util.Log;
 import it.source.com.bookshelf.Constants;
 
 public class BooksDatabase {
+    String sqlzapros = "SELECT " + Constants.BOOK_NAME + " , "
+            + Constants.BOOK_COVER
+            + ",  (SELECT "
+            + Constants.AUTHOR_NAME + " FROM "
+            + Constants.AUTHORS_TABLE + " WHERE "
+            + Constants.BOOK_TABLE + "." + Constants.BOOK_ID
+    + " = " + Constants.AUTHOR_PLUS_BOOK_TABLE + "." + Constants.BOOK_ID
+    + " AND " + Constants.AUTHOR_PLUS_BOOK_TABLE + "." + Constants.AUTHOR_ID
+    + " = " + Constants.AUTHORS_TABLE + "." + Constants.AUTHOR_ID +") FROM "
+            + Constants.BOOK_TABLE ;
 
     private DBHelper dbHelper;
     private SQLiteDatabase database;
@@ -19,6 +29,8 @@ public class BooksDatabase {
     public BooksDatabase(Context context) {
         this.context = context;
     }
+
+    // temp method
 
     public void fillSomeData(){
         ContentValues cv = new ContentValues();
@@ -88,6 +100,21 @@ public class BooksDatabase {
         cv.put(Constants.AUTHOR_LAST_NAME, "Martin");
         database.insert(Constants.AUTHORS_TABLE, null, cv);
         cv.clear();
+        cv.put(Constants.AUTHOR_ID, 1);
+        cv.put(Constants.BOOK_ID, 1);
+        cv.clear();
+        cv.put(Constants.AUTHOR_ID, 1);
+        cv.put(Constants.BOOK_ID, 2);
+        cv.clear();
+        cv.put(Constants.AUTHOR_ID, 2);
+        cv.put(Constants.BOOK_ID, 3);
+        cv.clear();
+        cv.put(Constants.AUTHOR_ID, 2);
+        cv.put(Constants.BOOK_ID, 4);
+        cv.clear();
+        cv.put(Constants.AUTHOR_ID, 3);
+        cv.put(Constants.BOOK_ID, 5);
+        cv.clear();
 
         // выводим в лог данные по должностям
         Cursor c;
@@ -98,8 +125,14 @@ public class BooksDatabase {
         Log.d(LOG_TAG, "--- ---");
         Log.d(LOG_TAG, "--- Table  ---");
         c = database.rawQuery("SELECT GROUP_CONCAT ( " + Constants.BOOK_NAME + "  ) AS order_summary" +
-                        " FROM " + Constants.BOOK_TABLE +
-                        " WHERE " + Constants.BOOK_GENRE + " = 1", null);
+                " FROM " + Constants.BOOK_TABLE +
+                " WHERE " + Constants.BOOK_GENRE + " = 1", null);
+        logCursor(c);
+        c.close();
+        Log.d(LOG_TAG, "--- ---");
+
+        Log.d(LOG_TAG, "--- Table 1 ---");
+        c = database.rawQuery(sqlzapros, null);
         logCursor(c);
         c.close();
         Log.d(LOG_TAG, "--- ---");
@@ -166,6 +199,7 @@ public class BooksDatabase {
     }
 
     public Cursor getDataForListView(){
+
         return database.rawQuery("sqlzapros",null);
     }
 
