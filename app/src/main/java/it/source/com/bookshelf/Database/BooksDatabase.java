@@ -102,24 +102,33 @@ public class BooksDatabase {
         cv.clear();
         cv.put(Constants.AUTHOR_ID, 1);
         cv.put(Constants.BOOK_ID, 1);
+        database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
         cv.clear();
         cv.put(Constants.AUTHOR_ID, 1);
         cv.put(Constants.BOOK_ID, 2);
+        database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
         cv.clear();
         cv.put(Constants.AUTHOR_ID, 2);
         cv.put(Constants.BOOK_ID, 3);
+        database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
         cv.clear();
         cv.put(Constants.AUTHOR_ID, 2);
         cv.put(Constants.BOOK_ID, 4);
+        database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
         cv.clear();
         cv.put(Constants.AUTHOR_ID, 3);
         cv.put(Constants.BOOK_ID, 5);
+        database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
         cv.clear();
 
         // выводим в лог данные по должностям
         Cursor c;
         Log.d(LOG_TAG, "--- Table position ---");
         c = database.query(Constants.BOOK_TABLE, null, null, null, null, null, null);
+        logCursor(c);
+        c.close();
+        Log.d(LOG_TAG, "--- Table position ---");
+        c = database.query(Constants.AUTHOR_PLUS_BOOK_TABLE, null, null, null, null, null, null);
         logCursor(c);
         c.close();
         Log.d(LOG_TAG, "--- ---");
@@ -155,6 +164,7 @@ public class BooksDatabase {
     }
 
     public void deleteAllData(){
+
         database.delete(Constants.BOOK_TABLE, null, null);
         database.delete(Constants.AUTHORS_TABLE, null, null);
         database.delete(Constants.GENRES_TABLE, null, null);
