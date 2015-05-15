@@ -1,15 +1,21 @@
 package it.source.com.bookshelf;
 
 import android.content.Context;
-import android.content.CursorLoader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import it.source.com.bookshelf.Database.BooksDatabase;
 
@@ -17,6 +23,10 @@ import it.source.com.bookshelf.Database.BooksDatabase;
 public class MainScreen extends ActionBarActivity {
 
     BooksDatabase database;
+    ListView lvBooks;
+    MyAdapter myAdapter;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +34,11 @@ public class MainScreen extends ActionBarActivity {
         setContentView(R.layout.activity_main_screen);
         database = new BooksDatabase(this);
         database.open();
+
+        lvBooks = (ListView)findViewById(R.id.lv_books);
+        myAdapter = new MyAdapter(this, database.getDataForListView(), 0);
+        lvBooks.setAdapter(myAdapter);
+
     }
 
     @Override
@@ -59,40 +74,71 @@ public class MainScreen extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void btnAddClick(View view) {
-
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
-    class MyCursorLoader extends CursorLoader{
+    private class  MyAdapter extends CursorAdapter{
 
-        BooksDatabase database;
+        private LayoutInflater mLayoutInflater;
 
-        public MyCursorLoader(Context context, BooksDatabase database) {
-            super(context);
-            this.database = database;
-
-        }
-
-        @Override
-        public Cursor loadInBackground(){
-            Cursor cursor = database.getDataForListView();
-            return cursor;
-        }
-    }
-    class  MyAdapter extends CursorAdapter{
-
-        public MyAdapter(Context context, Cursor c, int flags) {
+        private MyAdapter(Context context, Cursor c, int flags) {
             super(context, c, flags);
-        }
-
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return null;
+            mLayoutInflater = LayoutInflater.from(context);
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
+            ImageView photoIV = (ImageView) view
+                    .findViewById(R.id.iv_book_cover);
+            TextView tvBookName = (TextView) view
+                    .findViewById(R.id.tv_book_name);
+            TextView tvAuthors = (TextView) view
+                    .findViewById(R.id.tv_authors);
+
+            tvBookName.setText(cursor.getString(1));
+            tvAuthors.setText(cursor.getString(3));
+
+            /**
+             * Sets Name and Lastname of contact in one textbox.
+
+            if (cursor.getString(2).equals("")) {
+                tvName.setText(cursor.getString(1));
+            } else {
+                tvName.setText(cursor.getString(2)
+                        + ' '
+                        + cursor.getString(1));
+            }*/
+
+
+            /**
+             * Sets image and clears unused images
+             */
+            try{
+                Bitmap photo = MediaStore.Images.Media
+                        .getBitmap(getContentResolver(),
+                                Uri.parse(cursor.getString(6)));
+                Bitmap photoScaled = Bitmap
+                        .createScaledBitmap(photo, 70, 70, true);
+                photoIV.setImageBitmap(photoScaled);
+                if (photo != photoScaled) {
+                    photo.recycle();
+                }
+            } catch (Exception e) {
+            }
+
+
 
         }
+
+        @Override
+        public View newView(Context context,
+                            Cursor cursor, ViewGroup parent) {
+            return  mLayoutInflater
+                    .inflate(R.layout.item_book, parent, false);
+        }
+
     }
+
 }

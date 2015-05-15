@@ -10,29 +10,20 @@ import android.util.Log;
 import it.source.com.bookshelf.Constants;
 
 public class BooksDatabase {
-    String sqlzapros = "SELECT " + Constants.BOOK_NAME + " , "
-            + Constants.BOOK_COVER
-            + ",  (SELECT "
-            + Constants.AUTHOR_NAME + " FROM "
-            + Constants.AUTHORS_TABLE + " WHERE "
-            + Constants.BOOK_TABLE + "." + Constants.BOOK_ID
-    + " = " + Constants.AUTHOR_PLUS_BOOK_TABLE + "." + Constants.BOOK_ID
-    + " AND " + Constants.AUTHOR_PLUS_BOOK_TABLE + "." + Constants.AUTHOR_ID
-    + " = " + Constants.AUTHORS_TABLE + "." + Constants.AUTHOR_ID +") FROM "
-            + Constants.BOOK_TABLE ;
     private String temp = "\n" +
 
-            "SELECT b." + Constants.BOOK_NAME + // select books.name
+            "SELECT b." + Constants.BOOK_ID +
+            " , b." + Constants.BOOK_NAME + // select books.name
             " , b."+ Constants.BOOK_COVER + ",\n"+// ,books.cover
-            " GROUP_CONCAT(a." + Constants.AUTHOR_NAME + ") AS Authors\n" + // groyup( author.names) as authors
+            " GROUP_CONCAT((a." + Constants.AUTHOR_NAME + " || ' ' || a."+ Constants.AUTHOR_LAST_NAME + "), ', ') AS authors\n" + // group( author.names) as authors
             " FROM\n" + Constants.BOOK_TABLE  + " b " + // from books
             " INNER JOIN \n" +
             Constants.AUTHOR_PLUS_BOOK_TABLE  + " ab "+
             " ON b." + Constants.BOOK_ID +
             " = ab." + Constants.BOOK_ID +
-            " JOIN " + Constants.AUTHORS_TABLE + " a" +
+            " LEFT JOIN " +Constants.AUTHORS_TABLE + " a" +
             " ON ab." + Constants.AUTHOR_ID + " = a." + Constants.AUTHOR_ID +
-            " GROUP BY b." + Constants.BOOK_ID;
+            "  GROUP BY b." + Constants.BOOK_ID;
 
     private DBHelper dbHelper;
     private SQLiteDatabase database;
@@ -133,6 +124,14 @@ public class BooksDatabase {
         cv.put(Constants.BOOK_ID, 5);
         database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
         cv.clear();
+        cv.put(Constants.AUTHOR_ID, 2);
+        cv.put(Constants.BOOK_ID, 5);
+        database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
+        cv.clear();
+        cv.put(Constants.AUTHOR_ID, 3);
+        cv.put(Constants.BOOK_ID, 1);
+        database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
+        cv.clear();
 
         // выводим в лог данные по должностям
         Cursor c;
@@ -227,7 +226,7 @@ public class BooksDatabase {
 
     public Cursor getDataForListView(){
 
-        return database.rawQuery("sqlzapros",null);
+        return database.rawQuery(temp, null);
     }
 
     private class DBHelper extends SQLiteOpenHelper{
