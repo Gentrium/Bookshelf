@@ -20,6 +20,19 @@ public class BooksDatabase {
     + " AND " + Constants.AUTHOR_PLUS_BOOK_TABLE + "." + Constants.AUTHOR_ID
     + " = " + Constants.AUTHORS_TABLE + "." + Constants.AUTHOR_ID +") FROM "
             + Constants.BOOK_TABLE ;
+    private String temp = "\n" +
+
+            "SELECT b." + Constants.BOOK_NAME + // select books.name
+            " , b."+ Constants.BOOK_COVER + ",\n"+// ,books.cover
+            " GROUP_CONCAT(a." + Constants.AUTHOR_NAME + ") AS Authors\n" + // groyup( author.names) as authors
+            " FROM\n" + Constants.BOOK_TABLE  + " b " + // from books
+            " INNER JOIN \n" +
+            Constants.AUTHOR_PLUS_BOOK_TABLE  + " ab "+
+            " ON b." + Constants.BOOK_ID +
+            " = ab." + Constants.BOOK_ID +
+            " JOIN " + Constants.AUTHORS_TABLE + " a" +
+            " ON ab." + Constants.AUTHOR_ID + " = a." + Constants.AUTHOR_ID +
+            " GROUP BY b." + Constants.BOOK_ID;
 
     private DBHelper dbHelper;
     private SQLiteDatabase database;
@@ -123,25 +136,25 @@ public class BooksDatabase {
 
         // выводим в лог данные по должностям
         Cursor c;
-        Log.d(LOG_TAG, "--- Table position ---");
+        Log.d(LOG_TAG, "--- table books ---");
         c = database.query(Constants.BOOK_TABLE, null, null, null, null, null, null);
         logCursor(c);
         c.close();
-        Log.d(LOG_TAG, "--- Table position ---");
+        Log.d(LOG_TAG, "--- Table a_b ---");
         c = database.query(Constants.AUTHOR_PLUS_BOOK_TABLE, null, null, null, null, null, null);
         logCursor(c);
         c.close();
         Log.d(LOG_TAG, "--- ---");
-        Log.d(LOG_TAG, "--- Table  ---");
-        c = database.rawQuery("SELECT GROUP_CONCAT ( " + Constants.BOOK_NAME + "  ) AS order_summary" +
-                " FROM " + Constants.BOOK_TABLE +
-                " WHERE " + Constants.BOOK_GENRE + " = 1", null);
-        logCursor(c);
-        c.close();
-        Log.d(LOG_TAG, "--- ---");
+//        Log.d(LOG_TAG, "--- Table concat test  ---");
+//        c = database.rawQuery("SELECT GROUP_CONCAT ( " + Constants.BOOK_NAME + "  ) AS order_summary" +
+//                " FROM " + Constants.BOOK_TABLE +
+//                " WHERE " + Constants.BOOK_GENRE + " = 1", null);
+//        logCursor(c);
+//        c.close();
+//        Log.d(LOG_TAG, "--- ---");
 
         Log.d(LOG_TAG, "--- Table 1 ---");
-        c = database.rawQuery(sqlzapros, null);
+        c = database.rawQuery(temp, null);
         logCursor(c);
         c.close();
         Log.d(LOG_TAG, "--- ---");
@@ -165,10 +178,14 @@ public class BooksDatabase {
 
     public void deleteAllData(){
 
-        database.delete(Constants.BOOK_TABLE, null, null);
-        database.delete(Constants.AUTHORS_TABLE, null, null);
-        database.delete(Constants.GENRES_TABLE, null, null);
-        database.delete(Constants.AUTHOR_PLUS_BOOK_TABLE, null, null);
+        context.deleteDatabase(Constants.DATABASE_NAME);
+        open();
+
+//        database.delete(Constants.BOOK_TABLE, null, null);
+//        database.delete(Constants.AUTHORS_TABLE, null, null);
+//        database.delete(Constants.GENRES_TABLE, null, null);
+//        database.delete(Constants.AUTHOR_PLUS_BOOK_TABLE, null, null);
+
     }
 
     private static final String CREATE_BOOKS_TABLE = "create table "
