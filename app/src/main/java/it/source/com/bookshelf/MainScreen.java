@@ -1,21 +1,20 @@
 package it.source.com.bookshelf;
 
-import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import it.source.com.bookshelf.Database.BooksDatabase;
 
@@ -23,9 +22,8 @@ import it.source.com.bookshelf.Database.BooksDatabase;
 public class MainScreen extends ActionBarActivity {
 
     BooksDatabase database;
-    ListView lvBooks;
-    MyAdapter myAdapter;
-
+    RecyclerView rvBooks;
+    private RecyclerView.Adapter mAdapter;
 
 
     @Override
@@ -35,9 +33,14 @@ public class MainScreen extends ActionBarActivity {
         database = new BooksDatabase(this);
         database.open();
 
-        lvBooks = (ListView)findViewById(R.id.lv_books);
-        myAdapter = new MyAdapter(this, database.getDataForListView(), 0);
-        lvBooks.setAdapter(myAdapter);
+        rvBooks = (RecyclerView) findViewById(R.id.rv_books);
+        rvBooks.setHasFixedSize(true);
+        RecyclerView.LayoutManager lmRecycler = new LinearLayoutManager(this);
+        rvBooks.setLayoutManager(lmRecycler);
+
+        MyRecycleAdapter myRecycleAdapter =
+                new MyRecycleAdapter(bookInfoList(database.getDataForListView()));
+        rvBooks.setAdapter(myRecycleAdapter);
 
     }
 
@@ -74,71 +77,62 @@ public class MainScreen extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private List<BookInfo> bookInfoList(Cursor c) {
+        List<BookInfo> list = new ArrayList<>();
+        for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+            BookInfo bi = new BookInfo();
+            bi.bookName = c.getString(1);
+            bi.bookAuthors = c.getString(3);
+            bi.bookCover = c.getString(2);
+            list.add(bi);
+        }
+
+        return list;
     }
 
-    private class  MyAdapter extends CursorAdapter{
 
-        private LayoutInflater mLayoutInflater;
+    private class MyRecycleAdapter extends RecyclerView.Adapter<MyRecycleAdapter.ViewHolder> {
 
-        private MyAdapter(Context context, Cursor c, int flags) {
-            super(context, c, flags);
-            mLayoutInflater = LayoutInflater.from(context);
+        List<BookInfo> bookInfoList;
+
+        private MyRecycleAdapter(List<BookInfo> bookInfoList) {
+            this.bookInfoList = bookInfoList;
+        }
+
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_book, parent, false);
+            return new ViewHolder(v);
         }
 
         @Override
-        public void bindView(View view, Context context, Cursor cursor) {
-            ImageView photoIV = (ImageView) view
-                    .findViewById(R.id.iv_book_cover);
-            TextView tvBookName = (TextView) view
-                    .findViewById(R.id.tv_book_name);
-            TextView tvAuthors = (TextView) view
-                    .findViewById(R.id.tv_authors);
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            BookInfo bi = bookInfoList.get(position);
+            holder.name.setText(bi.bookName);
+            holder.authors.setText(bi.bookAuthors);
 
-            tvBookName.setText(cursor.getString(1));
-            tvAuthors.setText(cursor.getString(3));
+        }
 
-            /**
-             * Sets Name and Lastname of contact in one textbox.
+        @Override
+        public int getItemCount() {
+            return bookInfoList.size();
+        }
 
-            if (cursor.getString(2).equals("")) {
-                tvName.setText(cursor.getString(1));
-            } else {
-                tvName.setText(cursor.getString(2)
-                        + ' '
-                        + cursor.getString(1));
-            }*/
+        class ViewHolder extends RecyclerView.ViewHolder {
 
+            TextView name;
+            TextView authors;
+            ImageView cover;
 
-            /**
-             * Sets image and clears unused images
-             */
-            try{
-                Bitmap photo = MediaStore.Images.Media
-                        .getBitmap(getContentResolver(),
-                                Uri.parse(cursor.getString(6)));
-                Bitmap photoScaled = Bitmap
-                        .createScaledBitmap(photo, 70, 70, true);
-                photoIV.setImageBitmap(photoScaled);
-                if (photo != photoScaled) {
-                    photo.recycle();
-                }
-            } catch (Exception e) {
+            public ViewHolder(View itemView) {
+                super(itemView);
+                name = (TextView) itemView.findViewById(R.id.tv_book_name);
+                authors = (TextView) itemView.findViewById(R.id.tv_authors);
+                cover = (ImageView) itemView.findViewById(R.id.iv_book_cover);
             }
-
-
-
         }
-
-        @Override
-        public View newView(Context context,
-                            Cursor cursor, ViewGroup parent) {
-            return  mLayoutInflater
-                    .inflate(R.layout.item_book, parent, false);
-        }
-
     }
+
 
 }
