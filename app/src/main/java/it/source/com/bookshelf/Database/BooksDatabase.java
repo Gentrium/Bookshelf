@@ -187,31 +187,6 @@ public class BooksDatabase {
 
     }
 
-    private static final String CREATE_BOOKS_TABLE = "create table "
-            + Constants.BOOK_TABLE + " ("
-            + Constants.BOOK_ID + " integer primary key autoincrement, "
-            + Constants.BOOK_NAME + " text not null unique, "
-            + Constants.BOOK_SIZE + " integer not null, "
-            + Constants.BOOK_GENRE + " integer not null, "
-            + Constants.BOOK_ISBN + " integer unique, "
-            + Constants.BOOK_COVER + " text);";
-
-    private static final  String CREATE_AUTHOR_TABLE = "create table "
-            + Constants.AUTHORS_TABLE + " ( "
-            + Constants.AUTHOR_ID + " integer primary key autoincrement, "
-            + Constants.AUTHOR_NAME + " text not null, "
-            + Constants.AUTHOR_LAST_NAME + " text); ";
-
-    private static final String CREATE_GENRES_TABLE = "create table "
-            + Constants.GENRES_TABLE + " ( "
-            + Constants.GENRE_ID + " integer primary key autoincrement, "
-            + Constants.GENRE_NAME + " text not null unique ); ";
-
-    private static final String CREATE_AUTHORS_BOOKS_TABLE = "create table "
-            + Constants.AUTHOR_PLUS_BOOK_TABLE + " ( "
-            + Constants.BOOK_ID + " integer, "
-            + Constants.AUTHOR_ID + " integer);";
-
     // SELECT Name , COVER FROM BOOKS INNER JOIN
 
     public void open(){
@@ -236,10 +211,10 @@ public class BooksDatabase {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(CREATE_BOOKS_TABLE);
-            db.execSQL(CREATE_AUTHOR_TABLE);
-            db.execSQL(CREATE_AUTHORS_BOOKS_TABLE);
-            db.execSQL(CREATE_GENRES_TABLE);
+            db.execSQL(Constants.CREATE_BOOKS_TABLE);
+            db.execSQL(Constants.CREATE_AUTHOR_TABLE);
+            db.execSQL(Constants.CREATE_AUTHORS_BOOKS_TABLE);
+            db.execSQL(Constants.CREATE_GENRES_TABLE);
 
         }
 
