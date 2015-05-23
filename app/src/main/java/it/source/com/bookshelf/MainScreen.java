@@ -107,10 +107,7 @@ public class MainScreen extends ActionBarActivity {
         Cursor c = database.getDataForListView();
         bookList.clear();
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-            BookInfo bi = new BookInfo();
-            bi.bookName = c.getString(1);
-            bi.bookAuthors = c.getString(3);
-            bi.bookCover = c.getString(2);
+            BookInfo bi = new BookInfo(c.getString(1),c.getString(2),c.getString(3));
             bookList.add(bi);
         }
     }
@@ -200,8 +197,8 @@ public class MainScreen extends ActionBarActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             BookInfo bi = bookInfoList.get(position);
-            holder.name.setText(bi.bookName);
-            holder.authors.setText(bi.bookAuthors);
+            holder.name.setText(bi.getBookName());
+            holder.authors.setText(bi.getBookAuthors());
 
         }
 
