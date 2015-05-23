@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/iv_book_cover"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_btn_cover"
+        android:id="@+id/btn_select_cover"
+        android:layout_below="@id/iv_book_cover"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_book_name"
+        android:id="@+id/tv_book_name"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/iv_book_cover"
+        android:layout_toEndOf="@+id/iv_book_cover"
+        android:textSize="20sp" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_book_name"
+        android:layout_below="@id/tv_book_name"
+        android:layout_toRightOf="@id/iv_book_cover"
+        android:layout_toEndOf="@+id/iv_book_cover"
+        android:hint="@string/str_hint_book_name"
+        android:textSize="20sp" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="@string/str_authors"
+        android:id="@+id/tv_authors"
+        android:layout_below="@id/et_book_name"
+        android:layout_toRightOf="@+id/iv_book_cover"
+        android:layout_toEndOf="@+id/iv_book_cover"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_authors"
+        android:layout_toRightOf="@+id/iv_book_cover"
+        android:layout_toEndOf="@+id/iv_book_cover"
+        android:id="@+id/ll_authors"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="@string/str_genre"
+        android:id="@+id/tv_genre"
+        android:layout_below="@+id/ll_authors"
+        android:layout_toRightOf="@+id/iv_book_cover"
+        android:layout_toEndOf="@+id/iv_book_cover" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sp_genre"
+        android:layout_below="@+id/tv_genre"
+        android:layout_toRightOf="@+id/iv_book_cover"
+        android:layout_toEndOf="@+id/iv_book_cover" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_size"
+        android:textSize="15sp"
+        android:id="@+id/tv_size"
+        android:layout_below="@+id/sp_genre"
+        android:layout_alignLeft="@+id/sp_genre"
+        android:layout_alignStart="@+id/sp_genre" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:id="@+id/et_size"
+        android:hint="@string/str_hint_book_size"
+        android:layout_below="@+id/tv_size"
+        android:layout_alignLeft="@+id/sp_genre"
+        android:layout_alignStart="@+id/sp_genre"
+        android:inputType="numberSigned" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_isbn"
+        android:textSize="15sp"
+        android:id="@+id/tv_isbn"
+        android:layout_below="@+id/et_size"
+        android:layout_alignLeft="@+id/sp_genre"
+        android:layout_alignStart="@+id/sp_genre" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_isbn"
+        android:textSize="15sp"
+        android:hint="@string/str_hint_isbn"
+        android:layout_below="@+id/tv_isbn"
+        android:layout_alignLeft="@+id/sp_genre"
+        android:layout_alignStart="@+id/sp_genre" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_book_accept"
+        android:layout_below="@id/et_isbn"
+        android:layout_toStartOf="@id/et_isbn"
+        android:layout_toLeftOf="@id/et_isbn"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_cancel_btn"
+        android:id="@+id/btn_book_cancel"
+        android:layout_below="@id/et_isbn"
+        android:layout_toRightOf="@+id/btn_book_accept"
+        android:layout_toEndOf="@+id/btn_book_accept" />
+
+</RelativeLayout>

@@ -1,9 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainScreen">
-    <item android:id="@+id/clear_all" android:title="@string/str_clear_all"
+    <item android:id="@+id/add_author" android:title="@string/str_add_author"
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/add_genre" android:title="@string/str_add_genre"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/clear_all" android:title="@string/str_clear_all"
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_exit" android:title="@string/str_exit"
         android:orderInCategory="100" app:showAsAction="never" />

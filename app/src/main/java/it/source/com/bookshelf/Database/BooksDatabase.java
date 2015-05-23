@@ -24,6 +24,25 @@ public class BooksDatabase {
             " LEFT JOIN " +Constants.AUTHORS_TABLE + " a" +
             " ON ab." + Constants.AUTHOR_ID + " = a." + Constants.AUTHOR_ID +
             "  GROUP BY b." + Constants.BOOK_ID;
+    private String temp2 = "\n" +
+
+            "SELECT b." + Constants.BOOK_ID +
+            " , b." + Constants.BOOK_NAME + // select books.name
+            " , b."+ Constants.BOOK_COVER + ",\n"+// ,books.cover
+            " , b."+ Constants.BOOK_SIZE +
+            " , b."+ Constants.BOOK_ISBN +
+            " , g." + Constants.GENRE_NAME +
+            " GROUP_CONCAT((a." + Constants.AUTHOR_NAME + " || ' ' || a."+ Constants.AUTHOR_LAST_NAME + "), ', ') AS authors\n" + // group( author.names) as authors
+            " FROM\n" + Constants.BOOK_TABLE  + " b " + // from books
+            " INNER JOIN \n" +
+            Constants.AUTHOR_PLUS_BOOK_TABLE  + " ab "+
+            " ON b." + Constants.BOOK_ID +
+            " = ab." + Constants.BOOK_ID +
+            " LEFT JOIN " +Constants.AUTHORS_TABLE + " a" +
+            " ON ab." + Constants.AUTHOR_ID + " = a." + Constants.AUTHOR_ID +
+            " INNER JOIN " + Constants.GENRES_TABLE + " g" +
+            "ON b." + Constants.BOOK_GENRE + " = g." + Constants.GENRE_ID +
+            "  WHERE b." + Constants.BOOK_ID + " = " ;
 
     private DBHelper dbHelper;
     private SQLiteDatabase database;
@@ -186,8 +205,37 @@ public class BooksDatabase {
 //        database.delete(Constants.AUTHOR_PLUS_BOOK_TABLE, null, null);
 
     }
-
-    // SELECT Name , COVER FROM BOOKS INNER JOIN
+    public void addGenre(String genre){
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.GENRE_NAME, genre);
+        database.insert(Constants.GENRES_TABLE, null, cv);
+        Cursor c;
+        Log.d(LOG_TAG, "--- table books ---");
+        c = database.query(Constants.GENRES_TABLE, null, null, null, null, null, null);
+        logCursor(c);
+        c.close();
+    }
+    public void addAuthor(String name,String lastName){
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.AUTHOR_NAME, name);
+        cv.put(Constants.AUTHOR_LAST_NAME, lastName);
+        database.insert(Constants.AUTHORS_TABLE, null, cv);
+        Cursor c;
+        Log.d(LOG_TAG, "--- table books ---");
+        c = database.query(Constants.AUTHORS_TABLE, null, null, null, null, null, null);
+        logCursor(c);
+        c.close();
+    }
+    public void addAuthor(String name){
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.AUTHOR_NAME, name);
+        database.insert(Constants.AUTHORS_TABLE, null, cv);
+        Cursor c;
+        Log.d(LOG_TAG, "--- table books ---");
+        c = database.query(Constants.AUTHORS_TABLE, null, null, null, null, null, null);
+        logCursor(c);
+        c.close();
+    }
 
     public void open(){
         dbHelper = new DBHelper(context, Constants.DATABASE_NAME, null, 1);
@@ -202,6 +250,14 @@ public class BooksDatabase {
     public Cursor getDataForListView(){
 
         return database.rawQuery(temp, null);
+    }
+
+    public Cursor getAuthorsList(){
+        return database.query(Constants.AUTHORS_TABLE, new String[]{Constants.AUTHOR_NAME}, null, null, null, null, null, null);
+    }
+    public Cursor selectBook(int id){
+        Cursor c = database.rawQuery(temp2+id,null);
+        return null;
     }
 
     private class DBHelper extends SQLiteOpenHelper{
