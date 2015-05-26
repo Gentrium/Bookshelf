@@ -25,4 +25,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:+'
 //    compile "com.daimajia.swipelayout:library:1.2.0@aar"
     compile 'com.malinskiy:superrecyclerview:1.1.0'
+    compile 'com.malinskiy:materialicons:1.0.1'
 }

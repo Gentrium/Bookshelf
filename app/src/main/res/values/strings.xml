@@ -31,5 +31,6 @@
     <string name="str_genre">Genre</string>
     <string name="str_size">Book size</string>
     <string name="str_isbn">ISBN</string>
+    <string name="str_back">Back</string>
 
 </resources>

@@ -3,28 +3,28 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="70dp">
 
-    <ImageView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:id="@+id/iv_book_cover"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@drawable/book_image"
-         />
+    <!--<ImageView-->
+        <!--android:layout_width="70dp"-->
+        <!--android:layout_height="70dp"-->
+        <!--android:id="@+id/iv_book_cover"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:background="@drawable/book_image"-->
+         <!--/>-->
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="New Text"
-        android:id="@+id/tv_book_name"
-        android:layout_toRightOf="@id/iv_book_cover"
-        android:textSize="30dp" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:id="@+id/tv_authors"
-        android:layout_below="@id/tv_book_name"
-        android:layout_toRightOf="@id/iv_book_cover"/>
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:text="New Text"-->
+        <!--android:id="@+id/tv_book_name"-->
+        <!--android:layout_toRightOf="@id/iv_book_cover"-->
+        <!--android:textSize="30dp" />-->
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:id="@+id/tv_authors"-->
+        <!--android:layout_below="@id/tv_book_name"-->
+        <!--android:layout_toRightOf="@id/iv_book_cover"/>-->
 
 </RelativeLayout>

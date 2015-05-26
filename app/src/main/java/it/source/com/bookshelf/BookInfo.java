@@ -11,9 +11,9 @@ public class BookInfo implements Parcelable {
     private long isbn;
     private int size;
     private int id;
-    private int genre;
+    private String genre;
 
-    public BookInfo(String bookName, String bookCover, String bookAuthors, long isbn, int size, int id, int genre) {
+    public BookInfo(String bookName, String bookCover, String bookAuthors, long isbn, int size, int id, String genre) {
         this.bookName = bookName;
         this.bookCover = bookCover;
         this.bookAuthors = bookAuthors;
@@ -24,7 +24,7 @@ public class BookInfo implements Parcelable {
     }
 
     public BookInfo(String bookName, String bookCover, String bookAuthors) {
-        this(bookName,bookCover,bookAuthors, 0,0,0,0);
+        this(bookName,bookCover,bookAuthors, 0,0,0,null);
 //        this.bookName = bookName;
 //        this.bookCover = bookCover;
 //        this.bookAuthors = bookAuthors;
@@ -41,7 +41,7 @@ public class BookInfo implements Parcelable {
         bookAuthors = strings[2];
         id = ints[0];
         size = ints[1];
-        genre = ints[2];
+        genre = strings[3];
     }
 
     @Override
@@ -51,8 +51,8 @@ public class BookInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[]{bookName, bookCover, bookAuthors});
-        dest.writeIntArray(new int[]{id, size, genre});
+        dest.writeStringArray(new String[]{bookName, bookCover, bookAuthors, genre});
+        dest.writeIntArray(new int[]{id, size});
         dest.writeLong(isbn);
     }
 
@@ -80,7 +80,7 @@ public class BookInfo implements Parcelable {
         return id;
     }
 
-    public int getGenre() {
+    public String getGenre() {
         return genre;
     }
 
