@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -67,7 +68,7 @@ public class BookDialog extends DialogFragment {
 //        getDialog().setTitle(R.string.str_title_genre_add);
 
         View v = inflater.inflate(R.layout.book_dialog, null);
-        ctx = this.getActivity();
+        ctx = this.getActivity().getBaseContext();
         iv_cover = (ImageView) v.findViewById(R.id.iv_book_cover);
         btn_select_cover = (Button) v.findViewById(R.id.btn_select_cover);
         btn_accept = (Button) v.findViewById(R.id.btn_book_accept);
@@ -118,9 +119,13 @@ public class BookDialog extends DialogFragment {
         TextView tv = new TextView(ctx);
         tv.setText(bi.getBookAuthors());
         ll_authors.addView(tv);
-//        sp_genre.setAdapter(new ArrayAdapter<>(ctx,
-//                R.layout.support_simple_spinner_dropdown_item,
-//                new String[]{bi.getBookCover()}));
+        sp_genre.setAdapter(new ArrayAdapter<>(ctx,
+                R.layout.support_simple_spinner_dropdown_item,
+                new String[]{bi.getGenre()}));
+        sp_genre.setEnabled(false);
+        et_book_isbn.setSaveEnabled(false);
+        et_book_name.setEnabled(false);
+        et_book_size.setEnabled(false);
 
     }
 
