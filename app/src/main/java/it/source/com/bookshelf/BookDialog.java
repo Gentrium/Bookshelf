@@ -155,33 +155,4 @@ public class BookDialog extends DialogFragment {
 
     }
 
-//    public void onActivityResult(int requestCode,
-//                                 int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        switch (requestCode) {
-//            case 1:
-//                if (resultCode == RESULT_OK) {
-//                    uriCover = data.getData();
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//        try{
-//            Bitmap photo = MediaStore.Images.Media
-//                    .getBitmap(getContentResolver(), contactImageUri);
-//            Bitmap photoScaled = Bitmap.createScaledBitmap(photo, 70, 70, false);
-//            iv_cover.setImageBitmap(photoScaled);
-//        } catch (Exception e) {
-//            Toast.makeText(ctx, "Îøèáêà ÷òåíèÿ èçîáðàæåíèÿ", Toast.LENGTH_LONG)
-//                    .show();
-//        } catch(OutOfMemoryError e) {
-//            Toast.makeText(ctx, "Èçîáðàæåíèå ñëèøêîì áîëüøîå", Toast.LENGTH_LONG)
-//                    .show();
-//        }
-//
-//    }
-//
-
-
 }

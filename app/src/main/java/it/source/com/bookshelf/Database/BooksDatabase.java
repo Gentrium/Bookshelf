@@ -284,6 +284,23 @@ public class BooksDatabase {
         c.close();
     }
 
+    public static void addBook(String name, String cover, int genre, int size , long isbn, int [] authors){
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.BOOK_COVER, cover);
+        cv.put(Constants.BOOK_NAME, name);
+        cv.put(Constants.BOOK_GENRE, genre+1);
+        cv.put(Constants.BOOK_ISBN, isbn);
+        cv.put(Constants.BOOK_SIZE, size);
+        int insertId = (int) database.insert(Constants.BOOK_TABLE, null, cv);
+        cv.clear();
+        for (int i = 0; i < authors.length; i++) {
+            cv.put(Constants.BOOK_ID, insertId);
+            cv.put(Constants.AUTHOR_ID, authors[i]);
+            database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
+            cv.clear();
+        }
+    }
+
     public void open() {
         dbHelper = new DBHelper(context, Constants.DATABASE_NAME, null, 1);
         database = dbHelper.getWritableDatabase();

@@ -17,10 +17,12 @@
             </intent-filter>
         </activity>
         <activity
+
             android:name=".BookActivity"
-            android:theme="@android:style/Theme.Dialog"
+
             android:label="@string/title_activity_book" >
         </activity>
     </application>
 
 </manifest>
+    <!--android:theme="@android:style/Theme.Dialog"-->

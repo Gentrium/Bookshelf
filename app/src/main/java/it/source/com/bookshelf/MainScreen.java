@@ -221,6 +221,14 @@ public class MainScreen extends ActionBarActivity implements SwipeRefreshLayout.
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == Constants.MODE_ADDING && resultCode == RESULT_OK){
+            onRefresh();
+        }
+    }
+
+    @Override
     public void onMoreAsked(int numberOfItems, int numberBeforeMore, int currentItemPos) {
         Toast.makeText(this, "No more books", Toast.LENGTH_LONG).show();
     }

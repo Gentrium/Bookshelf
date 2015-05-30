@@ -23,6 +23,7 @@
 
     <string name="empty_genre_name_feild">Genre name cannot be empty</string>
     <string name="empty_author_name_feild">Author Name cannot be empty</string>
+    <string name="empty_field">Fill all fields</string>
 
     <string name="str_btn_cover">Select cover</string>
 

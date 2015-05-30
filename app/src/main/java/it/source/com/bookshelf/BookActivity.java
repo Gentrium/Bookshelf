@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -124,6 +125,51 @@ public class BookActivity extends Activity implements View.OnClickListener {
                 R.layout.support_simple_spinner_dropdown_item,
                 getGenresList()));
         btn_accept.setText(R.string.str_add_book);
+        btn_accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int [] authors = new int[0];
+                et_book_isbn.getText();
+                et_book_size.getText();
+
+                if(authorCount == 1){
+                    authors = new int[]{firstAuthor.getSelectedItemPosition()};
+                }else if(authorCount == 2){
+                    authors = new int[]{firstAuthor.getSelectedItemPosition(),
+                            secondAuthor.getSelectedItemPosition()};
+                }else if (authorCount == 3){
+                    authors = new int[]{firstAuthor.getSelectedItemPosition(),
+                            secondAuthor.getSelectedItemPosition(),
+                            thirdAuthor.getSelectedItemPosition()};
+                }else if (authorCount == 4){
+                    authors = new int[]{firstAuthor.getSelectedItemPosition(),
+                            secondAuthor.getSelectedItemPosition(),
+                            thirdAuthor.getSelectedItemPosition(),
+                            fourthAuthor.getSelectedItemPosition()};
+                }
+
+                try{
+                    uriCover.toString();
+                } catch (NullPointerException e) {
+                    uriCover = Uri.parse("android.resource://it.source.com.bookshelf/drawable/person");
+                }
+                if(TextUtils.isEmpty(et_book_name.getText().toString()) ||
+                        TextUtils.isEmpty(et_book_isbn.getText().toString()) ||
+                        TextUtils.isEmpty(et_book_size.getText().toString())) {
+                   Toast.makeText(BookActivity.this, R.string.empty_field,Toast.LENGTH_SHORT).show();
+                } else {
+                    BooksDatabase.addBook(et_book_name.getText().toString(),
+                            uriCover.toString(),
+                            sp_genre.getSelectedItemPosition(),
+                            Integer.parseInt(et_book_size.getText().toString()),
+                            Long.parseLong(et_book_isbn.getText().toString()),
+                            authors);
+                    setResult(RESULT_OK);
+                    finish();
+                }
+            }
+        });
 
 //        ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_one_spinner, ll_authors, false));
 
@@ -163,10 +209,6 @@ public class BookActivity extends Activity implements View.OnClickListener {
 
     }
 
-//    public void btnCancelClick(View view) {
-//        setResult(RESULT_CANCELED, new Intent());
-//        finish();
-//    }
 
     private void setCover(Uri uri) {
         try {
@@ -194,17 +236,17 @@ public class BookActivity extends Activity implements View.OnClickListener {
             case R.id.btn_plus_author:
                 if (authorCount == 1) {
                     ll_authors.removeAllViews();
-                    ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_two_spinners, null));
+                    ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_two_spinners, ll_authors));
                     secondAuthor = (Spinner) findViewById(R.id.secondAuthor);
                     secondAuthor.setAdapter(adapter);
                     authorCount++;
                 } else if (authorCount == 2) {
-                    ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_three_spinners, null));
+                    ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_three_spinners, ll_authors));
                     thirdAuthor = (Spinner) findViewById(R.id.thirdAuthor);
                     thirdAuthor.setAdapter(adapter);
                     authorCount++;
                 } else if (authorCount == 3) {
-                    ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_four_spinners, null));
+                    ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_four_spinners, ll_authors));
                     fourthAuthor = (Spinner) findViewById(R.id.fourthAuthor);
                     fourthAuthor.setAdapter(adapter);
                     authorCount++;
