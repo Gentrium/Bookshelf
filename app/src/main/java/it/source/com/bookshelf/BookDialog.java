@@ -2,6 +2,7 @@ package it.source.com.bookshelf;
 
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -18,6 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.source.com.bookshelf.Database.BooksDatabase;
 
 
@@ -33,6 +37,7 @@ public class BookDialog extends DialogFragment {
     private EditText et_book_isbn;
     private Spinner sp_genre;
     private LinearLayout ll_authors;
+    private Uri uriCover;
 
     static BookDialog openMode(int position) {
         BookDialog bookDialog = new BookDialog();
@@ -40,13 +45,6 @@ public class BookDialog extends DialogFragment {
         Bundle args = new Bundle();
         args.putByte(Constants.MODE_TYPE, Constants.MODE_OPEN);
         c.moveToFirst();
-        args.putInt(Constants.BOOK_ID, c.getInt(0));
-        args.putString(Constants.BOOK_NAME, c.getString(1));
-        args.putString(Constants.BOOK_COVER, c.getString(2));
-        args.putInt(Constants.BOOK_SIZE, c.getInt(3));
-        args.putLong(Constants.BOOK_ISBN, c.getLong(4));
-        args.putString(Constants.GENRE_NAME, c.getString(5));
-        args.putString(Constants.AUTHOR_NAME, c.getString(6));
 
         BookInfo bi = new BookInfo(c.getString(1), c.getString(2), c.getString(6), c.getLong(4), c.getInt(3), c.getInt(0), c.getString(5));
         args.putParcelable(Constants.BOOK_KEY, bi);
@@ -83,16 +81,37 @@ public class BookDialog extends DialogFragment {
         } else if (getArguments().getByte(Constants.MODE_TYPE) == Constants.MODE_ADDING) {
             addBook();
         }
+        btn_select_cover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, 1);
+            }
+        });
 
         return v;
     }
 
     private void addBook() {
+        getDialog().setTitle(R.string.str_add_book);
+        sp_genre.setAdapter(new ArrayAdapter<>(ctx,
+                R.layout.support_simple_spinner_dropdown_item,
+                getGenresList()));
 
+
+    }
+    private List<String> getGenresList(){
+        List<String> genres = new ArrayList<>();
+        Cursor c = BooksDatabase.getGenres();
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+            genres.add(c.getString(0));
+        }
+        return genres;
     }
 
     private void openBook(BookInfo bi) {
-
+        getDialog().setTitle(bi.getBookName());
         try {
             Bitmap photo = MediaStore.Images.Media
                     .getBitmap(ctx.getContentResolver(), Uri.parse(bi.getBookCover()));
@@ -123,11 +142,46 @@ public class BookDialog extends DialogFragment {
                 R.layout.support_simple_spinner_dropdown_item,
                 new String[]{bi.getGenre()}));
         sp_genre.setEnabled(false);
-        et_book_isbn.setSaveEnabled(false);
+        et_book_isbn.setEnabled(false);
         et_book_name.setEnabled(false);
         et_book_size.setEnabled(false);
+        btn_accept.setText(R.string.str_edit);
+        btn_accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
     }
+
+//    public void onActivityResult(int requestCode,
+//                                 int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        switch (requestCode) {
+//            case 1:
+//                if (resultCode == RESULT_OK) {
+//                    uriCover = data.getData();
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//        try{
+//            Bitmap photo = MediaStore.Images.Media
+//                    .getBitmap(getContentResolver(), contactImageUri);
+//            Bitmap photoScaled = Bitmap.createScaledBitmap(photo, 70, 70, false);
+//            iv_cover.setImageBitmap(photoScaled);
+//        } catch (Exception e) {
+//            Toast.makeText(ctx, "Îøèáêà ÷òåíèÿ èçîáðàæåíèÿ", Toast.LENGTH_LONG)
+//                    .show();
+//        } catch(OutOfMemoryError e) {
+//            Toast.makeText(ctx, "Èçîáðàæåíèå ñëèøêîì áîëüøîå", Toast.LENGTH_LONG)
+//                    .show();
+//        }
+//
+//    }
+//
 
 
 }

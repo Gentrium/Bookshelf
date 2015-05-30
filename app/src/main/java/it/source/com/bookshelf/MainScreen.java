@@ -1,8 +1,8 @@
 package it.source.com.bookshelf;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -55,9 +55,13 @@ public class MainScreen extends ActionBarActivity implements SwipeRefreshLayout.
             public void onItemClick(View view, int position) {
             Toast.makeText(MainScreen.this, "Clicked " + position, Toast.LENGTH_SHORT).show();
 
-                final DialogFragment newFragment = BookDialog.openMode(position);
-                newFragment.setStyle(DialogFragment.STYLE_NO_TITLE,0);
-                newFragment.show(getFragmentManager(), "dialog");
+                Intent intent = new Intent(MainScreen.this, BookActivity.class);
+                intent.putExtra(Constants.BOOK_ID,position);
+                startActivityForResult(intent, Constants.MODE_ADDING);
+
+//                final DialogFragment newFragment = BookDialog.openMode(position);
+////                newFragment.setStyle(DialogFragment.STYLE_NO_TITLE,0);
+//                newFragment.show(getFragmentManager(), "dialog");
             }
         }));
         mRecycler.setRefreshListener(this);
@@ -87,6 +91,11 @@ public class MainScreen extends ActionBarActivity implements SwipeRefreshLayout.
         switch (id) {
             case R.id.add_book:
                 database.fillSomeData();
+                Intent intent = new Intent(this, BookActivity.class);
+                startActivityForResult(intent, Constants.MODE_ADDING);
+//                final DialogFragment newFragment = BookDialog.addMode();
+////                newFragment.setStyle(DialogFragment.STYLE_NO_TITLE,0);
+//                newFragment.show(getFragmentManager(), "dialog");
                 break;
             case R.id.clear_all:
                 database.deleteAllData();
@@ -112,13 +121,13 @@ public class MainScreen extends ActionBarActivity implements SwipeRefreshLayout.
     @Override
     protected void onPause() {
         super.onPause();
-        database.close();
+//        database.close();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        database.open();
+//        database.open();
     }
 
     private void fillBookList() {

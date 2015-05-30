@@ -32,5 +32,9 @@
     <string name="str_size">Book size</string>
     <string name="str_isbn">ISBN</string>
     <string name="str_back">Back</string>
+    <string name="str_edit">Edit</string>
+    <string name="title_activity_book">Book</string>
+    <string name="err_too_many_authors"> Too many authors</string>
+
 
 </resources>

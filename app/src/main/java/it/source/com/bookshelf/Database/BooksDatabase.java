@@ -299,8 +299,13 @@ public class BooksDatabase {
         return database.rawQuery(queryTrimmedData, null);
     }
 
-    public Cursor getAuthorsList() {
-        return database.query(Constants.AUTHORS_TABLE, new String[]{Constants.AUTHOR_NAME}, null, null, null, null, null, null);
+    public static Cursor getAuthorsList() {
+        return database.query(Constants.AUTHORS_TABLE,
+                new String[]{Constants.AUTHOR_NAME, Constants.AUTHOR_LAST_NAME},
+                null, null, null, null, null, null);
+    }
+    public static Cursor getGenres(){
+        return database.query(Constants.GENRES_TABLE,new String[]{Constants.GENRE_NAME}, null, null, null, null, null, null);
     }
 
     private class DBHelper extends SQLiteOpenHelper {
