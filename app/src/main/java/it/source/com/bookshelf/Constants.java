@@ -48,6 +48,7 @@ public class Constants {
 
     public static final byte MODE_OPEN = 1;
     public static final byte MODE_ADDING = 0;
+    public static final byte MODE_EDIT = 2;
     public static final String MODE_TYPE = "bookMode";
     public static final String BOOK_KEY = "book_key";
 }

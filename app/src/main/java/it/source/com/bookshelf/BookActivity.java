@@ -43,35 +43,52 @@ public class BookActivity extends Activity implements View.OnClickListener {
     private Spinner fourthAuthor;
     private Button btn_plus_author;
     private byte authorCount = 1;
-    ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> adapter;
+    private byte mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.book_dialog);
 
-        iv_cover = (ImageView) findViewById(R.id.iv_book_cover);
-        btn_select_cover = (Button) findViewById(R.id.btn_select_cover);
-        btn_accept = (Button) findViewById(R.id.btn_book_accept);
-        btn_cancel = (Button) findViewById(R.id.btn_book_cancel);
-        et_book_name = (EditText) findViewById(R.id.et_book_name);
-        et_book_size = (EditText) findViewById(R.id.et_size);
-        et_book_isbn = (EditText) findViewById(R.id.et_isbn);
-        sp_genre = (Spinner) findViewById(R.id.sp_genre);
-        ll_authors = (LinearLayout) findViewById(R.id.ll_authors);
-        firstAuthor = (Spinner) findViewById(R.id.firstAuthor);
-        btn_plus_author = (Button) findViewById(R.id.btn_plus_author);
+        initUi();
+
+
 
         if (getIntent().hasExtra(Constants.BOOK_ID)) {
             Cursor c = BooksDatabase.selectBook(getIntent().getIntExtra(Constants.BOOK_ID, 0));
             c.moveToFirst();
             BookInfo bi = new BookInfo(c.getString(1), c.getString(2), c.getString(6), c.getLong(4), c.getInt(3), c.getInt(0), c.getString(5));
             c.close();
+            mode = Constants.MODE_OPEN;
             openMode(bi);
         } else {
+            mode = Constants.MODE_ADDING;
             addBook();
         }
 
+
+    }
+    private void initUi(){
+        iv_cover = (ImageView) findViewById(R.id.iv_book_cover);
+
+        btn_select_cover = (Button) findViewById(R.id.btn_select_cover);
+        btn_accept = (Button) findViewById(R.id.btn_book_accept);
+        btn_cancel = (Button) findViewById(R.id.btn_book_cancel);
+
+        et_book_name = (EditText) findViewById(R.id.et_book_name);
+        et_book_size = (EditText) findViewById(R.id.et_size);
+        et_book_isbn = (EditText) findViewById(R.id.et_isbn);
+
+        sp_genre = (Spinner) findViewById(R.id.sp_genre);
+        ll_authors = (LinearLayout) findViewById(R.id.ll_authors);
+
+        firstAuthor = (Spinner) findViewById(R.id.firstAuthor);
+        secondAuthor = (Spinner) findViewById(R.id.secondAuthor);
+        thirdAuthor = (Spinner) findViewById(R.id.thirdAuthor);
+        fourthAuthor = (Spinner) findViewById(R.id.fourthAuthor);
+
+        btn_plus_author = (Button) findViewById(R.id.btn_plus_author);
         btn_select_cover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,16 +97,32 @@ public class BookActivity extends Activity implements View.OnClickListener {
                 startActivityForResult(photoPickerIntent, 1);
             }
         });
+        btn_accept.setOnClickListener(this);
+        btn_plus_author.setOnClickListener(this);
+        btn_cancel.setOnClickListener(this);
+
+        adapter = new ArrayAdapter<>(this, R.layout.spinner_item, R.id.tv_spinner, getAuthorList());
+        firstAuthor.setAdapter(adapter);
+        secondAuthor.setAdapter(adapter);
+        thirdAuthor.setAdapter(adapter);
+        fourthAuthor.setAdapter(adapter);
     }
 
     private void openMode(BookInfo bi) {
 
         setTitle(bi.getBookName());
+
         if (bi.getBookCover() != null)
             setCover(Uri.parse(bi.getBookCover()));
+
         btn_select_cover.setVisibility(View.GONE);
         btn_plus_author.setVisibility(View.GONE);
+
         firstAuthor.setVisibility(View.GONE);
+        secondAuthor.setVisibility(View.GONE);
+        thirdAuthor.setVisibility(View.GONE);
+        fourthAuthor.setVisibility(View.GONE);
+
         btn_cancel.setText(R.string.str_back);
 
         et_book_name.setText(bi.getBookName());
@@ -110,12 +143,7 @@ public class BookActivity extends Activity implements View.OnClickListener {
         et_book_size.setEnabled(false);
 
         btn_accept.setText(R.string.str_edit);
-        btn_accept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
 
     }
 
@@ -125,57 +153,6 @@ public class BookActivity extends Activity implements View.OnClickListener {
                 R.layout.support_simple_spinner_dropdown_item,
                 getGenresList()));
         btn_accept.setText(R.string.str_add_book);
-        btn_accept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                int [] authors = new int[0];
-                et_book_isbn.getText();
-                et_book_size.getText();
-
-                if(authorCount == 1){
-                    authors = new int[]{firstAuthor.getSelectedItemPosition()};
-                }else if(authorCount == 2){
-                    authors = new int[]{firstAuthor.getSelectedItemPosition(),
-                            secondAuthor.getSelectedItemPosition()};
-                }else if (authorCount == 3){
-                    authors = new int[]{firstAuthor.getSelectedItemPosition(),
-                            secondAuthor.getSelectedItemPosition(),
-                            thirdAuthor.getSelectedItemPosition()};
-                }else if (authorCount == 4){
-                    authors = new int[]{firstAuthor.getSelectedItemPosition(),
-                            secondAuthor.getSelectedItemPosition(),
-                            thirdAuthor.getSelectedItemPosition(),
-                            fourthAuthor.getSelectedItemPosition()};
-                }
-
-                try{
-                    uriCover.toString();
-                } catch (NullPointerException e) {
-                    uriCover = Uri.parse("android.resource://it.source.com.bookshelf/drawable/person");
-                }
-                if(TextUtils.isEmpty(et_book_name.getText().toString()) ||
-                        TextUtils.isEmpty(et_book_isbn.getText().toString()) ||
-                        TextUtils.isEmpty(et_book_size.getText().toString())) {
-                   Toast.makeText(BookActivity.this, R.string.empty_field,Toast.LENGTH_SHORT).show();
-                } else {
-                    BooksDatabase.addBook(et_book_name.getText().toString(),
-                            uriCover.toString(),
-                            sp_genre.getSelectedItemPosition(),
-                            Integer.parseInt(et_book_size.getText().toString()),
-                            Long.parseLong(et_book_isbn.getText().toString()),
-                            authors);
-                    setResult(RESULT_OK);
-                    finish();
-                }
-            }
-        });
-
-//        ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_one_spinner, ll_authors, false));
-
-        btn_plus_author.setOnClickListener(this);
-        adapter = new ArrayAdapter<>(this, R.layout.spinner_item, R.id.tv_spinner, getAuthorList());
-        firstAuthor.setAdapter(adapter);
     }
 
 
@@ -225,6 +202,27 @@ public class BookActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    private int[] getSelectedAuthors(){
+        int[] authors = new int[0];
+
+        if (authorCount == 1) {
+            authors = new int[]{firstAuthor.getSelectedItemPosition()};
+        } else if (authorCount == 2) {
+            authors = new int[]{firstAuthor.getSelectedItemPosition(),
+                    secondAuthor.getSelectedItemPosition()};
+        } else if (authorCount == 3) {
+            authors = new int[]{firstAuthor.getSelectedItemPosition(),
+                    secondAuthor.getSelectedItemPosition(),
+                    thirdAuthor.getSelectedItemPosition()};
+        } else if (authorCount == 4) {
+            authors = new int[]{firstAuthor.getSelectedItemPosition(),
+                    secondAuthor.getSelectedItemPosition(),
+                    thirdAuthor.getSelectedItemPosition(),
+                    fourthAuthor.getSelectedItemPosition()};
+        }
+        return authors;
+    }
+
     @Override
     public void onClick(View v) {
 
@@ -235,25 +233,59 @@ public class BookActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.btn_plus_author:
                 if (authorCount == 1) {
-                    ll_authors.removeAllViews();
-                    ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_two_spinners, ll_authors));
-                    secondAuthor = (Spinner) findViewById(R.id.secondAuthor);
-                    secondAuthor.setAdapter(adapter);
+                    secondAuthor.setVisibility(View.VISIBLE);
                     authorCount++;
                 } else if (authorCount == 2) {
-                    ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_three_spinners, ll_authors));
-                    thirdAuthor = (Spinner) findViewById(R.id.thirdAuthor);
-                    thirdAuthor.setAdapter(adapter);
+                    thirdAuthor.setVisibility(View.VISIBLE);
                     authorCount++;
                 } else if (authorCount == 3) {
-                    ll_authors.addView(getLayoutInflater().inflate(R.layout.authors_four_spinners, ll_authors));
-                    fourthAuthor = (Spinner) findViewById(R.id.fourthAuthor);
-                    fourthAuthor.setAdapter(adapter);
-                    authorCount++;
+                    fourthAuthor.setVisibility(View.VISIBLE);
+                    btn_plus_author.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(BookActivity.this, R.string.err_too_many_authors, Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.btn_book_accept:
+                switch (mode){
+                    case Constants.MODE_ADDING:
+
+                        try {
+                            uriCover.toString();
+                        } catch (NullPointerException e) {
+                            uriCover = Uri.parse("android.resource://it.source.com.bookshelf/drawable/person");
+                        }
+                        if (TextUtils.isEmpty(et_book_name.getText().toString()) ||
+                                TextUtils.isEmpty(et_book_isbn.getText().toString()) ||
+                                TextUtils.isEmpty(et_book_size.getText().toString())) {
+                            Toast.makeText(BookActivity.this, R.string.empty_field, Toast.LENGTH_SHORT).show();
+                        } else {
+                            BooksDatabase.addBook(et_book_name.getText().toString(),
+                                    uriCover.toString(),
+                                    sp_genre.getSelectedItemPosition(),
+                                    Integer.parseInt(et_book_size.getText().toString()),
+                                    Long.parseLong(et_book_isbn.getText().toString()),
+                                    getSelectedAuthors());
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                        break;
+                    case Constants.MODE_OPEN:
+                        mode = Constants.MODE_EDIT;
+
+                        sp_genre.setEnabled(true);
+                        et_book_isbn.setEnabled(true);
+                        et_book_name.setEnabled(true);
+                        et_book_size.setEnabled(true);
+                        btn_select_cover.setVisibility(View.VISIBLE);
+                        btn_plus_author.setVisibility(View.VISIBLE);
+                        btn_accept.setText(R.string.str_ok);
+
+                        firstAuthor.setVisibility(View.VISIBLE);
+                        ll_authors.refreshDrawableState();
+                        break;
+                    case Constants.MODE_EDIT:
+                        break;
+                }
         }
     }
 }

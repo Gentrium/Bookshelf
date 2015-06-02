@@ -59,9 +59,6 @@ public class MainScreen extends ActionBarActivity implements SwipeRefreshLayout.
                 intent.putExtra(Constants.BOOK_ID,position);
                 startActivityForResult(intent, Constants.MODE_ADDING);
 
-//                final DialogFragment newFragment = BookDialog.openMode(position);
-////                newFragment.setStyle(DialogFragment.STYLE_NO_TITLE,0);
-//                newFragment.show(getFragmentManager(), "dialog");
             }
         }));
         mRecycler.setRefreshListener(this);
@@ -93,9 +90,6 @@ public class MainScreen extends ActionBarActivity implements SwipeRefreshLayout.
                 database.fillSomeData();
                 Intent intent = new Intent(this, BookActivity.class);
                 startActivityForResult(intent, Constants.MODE_ADDING);
-//                final DialogFragment newFragment = BookDialog.addMode();
-////                newFragment.setStyle(DialogFragment.STYLE_NO_TITLE,0);
-//                newFragment.show(getFragmentManager(), "dialog");
                 break;
             case R.id.clear_all:
                 database.deleteAllData();
