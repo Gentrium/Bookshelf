@@ -1,4 +1,4 @@
-package it.source.com.bookshelf;
+package it.source.com.bookshelf.Utils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,20 +7,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.malinskiy.superrecyclerview.swipe.BaseSwipeAdapter;
 import com.malinskiy.superrecyclerview.swipe.SwipeLayout;
 
 import java.util.List;
 
+import it.source.com.bookshelf.Database.BookInfo;
 import it.source.com.bookshelf.Database.BooksDatabase;
+import it.source.com.bookshelf.R;
 
 public class MyAdapter extends BaseSwipeAdapter<MyAdapter.ViewHolder> {
 
     List<BookInfo> bookInfoList;
 
-    MyAdapter(List<BookInfo> bookInfoList) {
+    public MyAdapter(List<BookInfo> bookInfoList) {
         this.bookInfoList = bookInfoList;
     }
 
@@ -35,18 +36,24 @@ public class MyAdapter extends BaseSwipeAdapter<MyAdapter.ViewHolder> {
         swipeLayout.setDragEdge(SwipeLayout.DragEdge.Right);
         swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
 
-        swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
-            @Override
-            public void onDoubleClick(SwipeLayout layout, boolean surface) {
-                Toast.makeText(context, "DoubleClick", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 remove(viewHolder.getLayoutPosition());
-                Toast.makeText(v.getContext(), "Deleted " + viewHolder.getLayoutPosition(), Toast.LENGTH_SHORT).show();
+            }
+        });
+//        Next 2 methods need for better onclick performance
+        viewHolder.name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        viewHolder.authors.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -60,8 +67,6 @@ public class MyAdapter extends BaseSwipeAdapter<MyAdapter.ViewHolder> {
         BookInfo bi = bookInfoList.get(position);
         holder.name.setText(bi.getBookName());
         holder.authors.setText(bi.getBookAuthors());
-
-//        holder.textView.setText(mData.get(position));
     }
 
     @Override
@@ -77,10 +82,7 @@ public class MyAdapter extends BaseSwipeAdapter<MyAdapter.ViewHolder> {
     public void remove(int position) {
 
         BooksDatabase.deleteBook(bookInfoList.get(position).getId() + 1);
-//        MainScreen.onRefresh();
-
         closeItem(position);
-
         notifyItemRemoved(position);
     }
 

@@ -1,4 +1,4 @@
-package it.source.com.bookshelf;
+package it.source.com.bookshelf.GUI;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -19,7 +19,12 @@ import com.malinskiy.superrecyclerview.swipe.SwipeItemManagerInterface;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.source.com.bookshelf.Database.BookInfo;
 import it.source.com.bookshelf.Database.BooksDatabase;
+import it.source.com.bookshelf.Database.Constants;
+import it.source.com.bookshelf.R;
+import it.source.com.bookshelf.Utils.ItemListener;
+import it.source.com.bookshelf.Utils.MyAdapter;
 
 
 public class MainScreen extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener, OnMoreListener  {
@@ -48,10 +53,9 @@ public class MainScreen extends ActionBarActivity implements SwipeRefreshLayout.
         mRecycler.addOnItemTouchListener(new ItemListener.RecyclerItemClickListener(this, new ItemListener.RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-            Toast.makeText(MainScreen.this, "Clicked " + position, Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(MainScreen.this, BookActivity.class);
-                intent.putExtra(Constants.BOOK_ID,position);
+                intent.putExtra(Constants.BOOK_ID, position);
                 startActivityForResult(intent, Constants.MODE_ADDING);
 
             }

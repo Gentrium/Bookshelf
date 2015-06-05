@@ -1,4 +1,4 @@
-package it.source.com.bookshelf;
+package it.source.com.bookshelf.GUI;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -24,7 +24,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.source.com.bookshelf.Database.BookInfo;
 import it.source.com.bookshelf.Database.BooksDatabase;
+import it.source.com.bookshelf.Database.Constants;
+import it.source.com.bookshelf.R;
 
 
 public class BookActivity extends ActionBarActivity implements View.OnClickListener {
@@ -313,7 +316,7 @@ public class BookActivity extends ActionBarActivity implements View.OnClickListe
                                 TextUtils.isEmpty(et_book_size.getText().toString())) {
                             Toast.makeText(BookActivity.this, R.string.empty_field, Toast.LENGTH_SHORT).show();
                         } else {
-                            BooksDatabase.updateBook(id ,et_book_name.getText().toString(),
+                            BooksDatabase.updateBook(id, et_book_name.getText().toString(),
                                     uriCover.toString(),
                                     sp_genre.getSelectedItemPosition(),
                                     Integer.parseInt(et_book_size.getText().toString()),

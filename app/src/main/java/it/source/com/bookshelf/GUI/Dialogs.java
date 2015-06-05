@@ -1,4 +1,4 @@
-package it.source.com.bookshelf;
+package it.source.com.bookshelf.GUI;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import it.source.com.bookshelf.Database.BooksDatabase;
+import it.source.com.bookshelf.Database.Constants;
+import it.source.com.bookshelf.R;
 
 public class Dialogs {
 

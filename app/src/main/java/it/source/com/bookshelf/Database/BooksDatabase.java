@@ -5,13 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import it.source.com.bookshelf.Constants;
 
 public class BooksDatabase {
-    private static final String LOG_TAG = "logs";
-
     private static SQLiteDatabase database;
     private DBHelper dbHelper;
     private Context context;
@@ -26,13 +21,11 @@ public class BooksDatabase {
     }
 
     public static void deleteBook(int id) {
-        logCursor(database.query(Constants.BOOK_TABLE,null,null,null,null,null,null));
         database.delete(Constants.AUTHOR_PLUS_BOOK_TABLE, Constants.BOOK_ID + " = " + id, null);
         database.delete(Constants.BOOK_TABLE, Constants.BOOK_ID + " = " + id, null);
-        Log.d(LOG_TAG,"------------------------------------------------");
-        logCursor(database.query(Constants.BOOK_TABLE, null, null, null, null, null, null));
     }
 
+//    Temporary method to fill bookshelf
     public void fillSomeData() {
         ContentValues cv = new ContentValues();
         cv.put(Constants.BOOK_NAME, "Android in practice");
@@ -163,48 +156,6 @@ public class BooksDatabase {
         cv.put(Constants.BOOK_ID, 9);
         database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
         cv.clear();
-
-        // выводим в лог данные по должностям
-        Cursor c;
-        Log.d(LOG_TAG, "--- table books ---");
-        c = database.query(Constants.BOOK_TABLE, null, null, null, null, null, null);
-        logCursor(c);
-        c.close();
-        Log.d(LOG_TAG, "--- Table a_b ---");
-        c = database.query(Constants.AUTHOR_PLUS_BOOK_TABLE, null, null, null, null, null, null);
-        logCursor(c);
-        c.close();
-        Log.d(LOG_TAG, "--- ---");
-//        Log.d(LOG_TAG, "--- Table concat test  ---");
-//        c = database.rawQuery("SELECT GROUP_CONCAT ( " + Constants.BOOK_NAME + "  ) AS order_summary" +
-//                " FROM " + Constants.BOOK_TABLE +
-//                " WHERE " + Constants.BOOK_GENRE + " = 1", null);
-//        logCursor(c);
-//        c.close();
-//        Log.d(LOG_TAG, "--- ---");
-
-        Log.d(LOG_TAG, "--- Table 1 ---");
-        c = database.rawQuery(Constants.queryTrimmedData, null);
-        logCursor(c);
-        c.close();
-        Log.d(LOG_TAG, "--- ---");
-
-    }
-
-    static void logCursor(Cursor c) {
-        if (c != null) {
-            if (c.moveToFirst()) {
-                String str;
-                do {
-                    str = "";
-                    for (String cn : c.getColumnNames()) {
-                        str = str.concat(cn + " = " + c.getString(c.getColumnIndex(cn)) + "; ");
-                    }
-                    Log.d(LOG_TAG, str);
-                } while (c.moveToNext());
-            }
-        } else
-            Log.d(LOG_TAG, "Cursor is null");
     }
 
     public void deleteAllData() {
@@ -223,11 +174,6 @@ public class BooksDatabase {
         ContentValues cv = new ContentValues();
         cv.put(Constants.GENRE_NAME, genre);
         database.insert(Constants.GENRES_TABLE, null, cv);
-        Cursor c;
-        Log.d(LOG_TAG, "--- table books ---");
-        c = database.query(Constants.GENRES_TABLE, null, null, null, null, null, null);
-        logCursor(c);
-        c.close();
     }
 
     public static void addAuthor(String name, String lastName) {
@@ -235,22 +181,12 @@ public class BooksDatabase {
         cv.put(Constants.AUTHOR_NAME, name);
         cv.put(Constants.AUTHOR_LAST_NAME, lastName);
         database.insert(Constants.AUTHORS_TABLE, null, cv);
-        Cursor c;
-        Log.d(LOG_TAG, "--- table books ---");
-        c = database.query(Constants.AUTHORS_TABLE, null, null, null, null, null, null);
-        logCursor(c);
-        c.close();
     }
 
     public static void addAuthor(String name) {
         ContentValues cv = new ContentValues();
         cv.put(Constants.AUTHOR_NAME, name);
         database.insert(Constants.AUTHORS_TABLE, null, cv);
-        Cursor c;
-        Log.d(LOG_TAG, "--- table books ---");
-        c = database.query(Constants.AUTHORS_TABLE, null, null, null, null, null, null);
-        logCursor(c);
-        c.close();
     }
 
     public static void addBook(String name, String cover, int genre, int size , long isbn, int [] authors){
@@ -269,6 +205,7 @@ public class BooksDatabase {
             cv.clear();
         }
     }
+
     public static void updateBook(int id, String name, String cover, int genre, int size, long isbn, int[] authors){
         ContentValues cv = new ContentValues();
         cv.put(Constants.BOOK_COVER, cover);
@@ -300,7 +237,6 @@ public class BooksDatabase {
     }
 
     public Cursor getDataForListView() {
-
         return database.rawQuery(Constants.queryTrimmedData, null);
     }
 

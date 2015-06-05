@@ -1,4 +1,4 @@
-package it.source.com.bookshelf;
+package it.source.com.bookshelf.Database;
 
 public class Constants {
     public static final String BOOK_TABLE = "books";
