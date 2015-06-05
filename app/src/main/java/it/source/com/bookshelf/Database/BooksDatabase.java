@@ -11,39 +11,8 @@ import it.source.com.bookshelf.Constants;
 
 public class BooksDatabase {
     private static final String LOG_TAG = "logs";
-    private static String queryBookData = "\n" +
-            "SELECT b." + Constants.BOOK_ID +
-            " , b." + Constants.BOOK_NAME + // select books.name
-            " , b." + Constants.BOOK_COVER +
-            " , b." + Constants.BOOK_SIZE +
-            " , b." + Constants.BOOK_ISBN +
-            " , g." + Constants.GENRE_NAME +
-            " , GROUP_CONCAT((a." + Constants.AUTHOR_NAME + " || ' ' || a." + Constants.AUTHOR_LAST_NAME + "), ', ') AS authors\n" + // group( author.names) as authors
-            " FROM\n" + Constants.BOOK_TABLE + " b " + // from books
-            " INNER JOIN \n" +
-            Constants.AUTHOR_PLUS_BOOK_TABLE + " ab " +
-            " ON b." + Constants.BOOK_ID +
-            " = ab." + Constants.BOOK_ID +
-            " LEFT JOIN " + Constants.AUTHORS_TABLE + " a" +
-            " ON ab." + Constants.AUTHOR_ID + " = a." + Constants.AUTHOR_ID +
-            " INNER JOIN " + Constants.GENRES_TABLE + " g" +
-            " ON b." + Constants.BOOK_GENRE + " = g." + Constants.GENRE_ID +
-            " WHERE b." + Constants.BOOK_ID + " = ";
-    private static SQLiteDatabase database;
-    private String queryTrimmedData = "\n" +
 
-            "SELECT b." + Constants.BOOK_ID +
-            " , b." + Constants.BOOK_NAME + // select books.name
-            " , b." + Constants.BOOK_COVER + ",\n" +// ,books.cover
-            " GROUP_CONCAT((a." + Constants.AUTHOR_NAME + " || ' ' || a." + Constants.AUTHOR_LAST_NAME + "), ', ') AS authors\n" + // group( author.names) as authors
-            " FROM\n" + Constants.BOOK_TABLE + " b " + // from books
-            " INNER JOIN \n" +
-            Constants.AUTHOR_PLUS_BOOK_TABLE + " ab " +
-            " ON b." + Constants.BOOK_ID +
-            " = ab." + Constants.BOOK_ID +
-            " LEFT JOIN " + Constants.AUTHORS_TABLE + " a" +
-            " ON ab." + Constants.AUTHOR_ID + " = a." + Constants.AUTHOR_ID +
-            "  GROUP BY b." + Constants.BOOK_ID;
+    private static SQLiteDatabase database;
     private DBHelper dbHelper;
     private Context context;
 
@@ -52,7 +21,7 @@ public class BooksDatabase {
     }
 
     public static Cursor selectBook(int id) {
-        Cursor c = database.rawQuery(queryBookData + (id + 1), null);
+        Cursor c = database.rawQuery(Constants.queryBookData + (id + 1), null);
         return c;
     }
 
@@ -215,7 +184,7 @@ public class BooksDatabase {
 //        Log.d(LOG_TAG, "--- ---");
 
         Log.d(LOG_TAG, "--- Table 1 ---");
-        c = database.rawQuery(queryTrimmedData, null);
+        c = database.rawQuery(Constants.queryTrimmedData, null);
         logCursor(c);
         c.close();
         Log.d(LOG_TAG, "--- ---");
@@ -250,7 +219,7 @@ public class BooksDatabase {
 
     }
 
-    public void addGenre(String genre) {
+    public static void addGenre(String genre) {
         ContentValues cv = new ContentValues();
         cv.put(Constants.GENRE_NAME, genre);
         database.insert(Constants.GENRES_TABLE, null, cv);
@@ -261,7 +230,7 @@ public class BooksDatabase {
         c.close();
     }
 
-    public void addAuthor(String name, String lastName) {
+    public static void addAuthor(String name, String lastName) {
         ContentValues cv = new ContentValues();
         cv.put(Constants.AUTHOR_NAME, name);
         cv.put(Constants.AUTHOR_LAST_NAME, lastName);
@@ -273,7 +242,7 @@ public class BooksDatabase {
         c.close();
     }
 
-    public void addAuthor(String name) {
+    public static void addAuthor(String name) {
         ContentValues cv = new ContentValues();
         cv.put(Constants.AUTHOR_NAME, name);
         database.insert(Constants.AUTHORS_TABLE, null, cv);
@@ -288,14 +257,33 @@ public class BooksDatabase {
         ContentValues cv = new ContentValues();
         cv.put(Constants.BOOK_COVER, cover);
         cv.put(Constants.BOOK_NAME, name);
-        cv.put(Constants.BOOK_GENRE, genre+1);
+        cv.put(Constants.BOOK_GENRE, genre + 1);
         cv.put(Constants.BOOK_ISBN, isbn);
         cv.put(Constants.BOOK_SIZE, size);
         int insertId = (int) database.insert(Constants.BOOK_TABLE, null, cv);
         cv.clear();
         for (int i = 0; i < authors.length; i++) {
             cv.put(Constants.BOOK_ID, insertId);
-            cv.put(Constants.AUTHOR_ID, authors[i]);
+            cv.put(Constants.AUTHOR_ID, authors[i] + 1);
+            database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
+            cv.clear();
+        }
+    }
+    public static void updateBook(int id, String name, String cover, int genre, int size, long isbn, int[] authors){
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.BOOK_COVER, cover);
+        cv.put(Constants.BOOK_NAME, name);
+        cv.put(Constants.BOOK_GENRE, genre + 1);
+        cv.put(Constants.BOOK_ISBN, isbn);
+        cv.put(Constants.BOOK_SIZE, size);
+        database.update(Constants.BOOK_TABLE, cv, Constants.BOOK_ID + " = ?",
+                 new String[]{String.valueOf(id)});
+        database.delete(Constants.AUTHOR_PLUS_BOOK_TABLE,Constants.BOOK_ID + " = ?",
+                new String[]{String.valueOf(id)});
+        cv.clear();
+        for (int i = 0; i < authors.length; i++) {
+            cv.put(Constants.BOOK_ID, id);
+            cv.put(Constants.AUTHOR_ID, authors[i] + 1);
             database.insert(Constants.AUTHOR_PLUS_BOOK_TABLE, null, cv);
             cv.clear();
         }
@@ -313,7 +301,7 @@ public class BooksDatabase {
 
     public Cursor getDataForListView() {
 
-        return database.rawQuery(queryTrimmedData, null);
+        return database.rawQuery(Constants.queryTrimmedData, null);
     }
 
     public static Cursor getAuthorsList() {

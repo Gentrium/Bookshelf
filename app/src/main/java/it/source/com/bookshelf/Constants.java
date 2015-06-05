@@ -15,9 +15,42 @@ public class Constants {
     public static final String AUTHOR_LAST_NAME = "lastName";
     public static final String AUTHOR_PLUS_BOOK_TABLE = "author_book";
 
+    public static final String queryTrimmedData = "\n" +
+            "SELECT b." + BOOK_ID +
+            " , b." + BOOK_NAME +
+            " , b." + BOOK_COVER + ",\n" +
+            " GROUP_CONCAT((a." + AUTHOR_NAME + " || ' ' || a." + AUTHOR_LAST_NAME + "), ', ') AS authors\n" +
+            " FROM\n" + BOOK_TABLE + " b " +
+            " INNER JOIN \n" +
+            AUTHOR_PLUS_BOOK_TABLE + " ab " +
+            " ON b." + BOOK_ID +
+            " = ab." + BOOK_ID +
+            " LEFT JOIN " + AUTHORS_TABLE + " a" +
+            " ON ab." + AUTHOR_ID + " = a." + AUTHOR_ID +
+            "  GROUP BY b." + BOOK_ID;
+
     public static final String GENRES_TABLE = "genres";
     public static final String GENRE_NAME = "genre";
     public static final String GENRE_ID = "genre_id";
+
+    public static final String queryBookData = "\n" +
+            "SELECT b." + BOOK_ID +
+            " , b." + BOOK_NAME + // select books.name
+            " , b." + BOOK_COVER +
+            " , b." + BOOK_SIZE +
+            " , b." + BOOK_ISBN +
+            " , g." + GENRE_NAME +
+            " , GROUP_CONCAT((a." + AUTHOR_NAME + " || ' ' || a." + AUTHOR_LAST_NAME + "), ', ') AS authors\n" +
+            " FROM\n" + BOOK_TABLE + " b " + // from books
+            " INNER JOIN \n" +
+            AUTHOR_PLUS_BOOK_TABLE + " ab " +
+            " ON b." + BOOK_ID +
+            " = ab." + BOOK_ID +
+            " LEFT JOIN " + AUTHORS_TABLE + " a" +
+            " ON ab." + AUTHOR_ID + " = a." + AUTHOR_ID +
+            " INNER JOIN " + GENRES_TABLE + " g" +
+            " ON b." + BOOK_GENRE + " = g." + GENRE_ID +
+            " WHERE b." + BOOK_ID + " = ";
 
     public static final String DATABASE_NAME = "bookshelf";
 
@@ -51,4 +84,7 @@ public class Constants {
     public static final byte MODE_EDIT = 2;
     public static final String MODE_TYPE = "bookMode";
     public static final String BOOK_KEY = "book_key";
+
+    public static final byte ADD_AUTHOR = 0;
+    public static final byte ADD_GENRE = 1;
 }
